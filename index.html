@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Спасатель подарков</title>
+    <link rel="stylesheet" href="style.css">
     <style>
         canvas {
             display: block;
@@ -14,6 +15,17 @@
 </head>
 <body>
     <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <div id="menu">
+        <h1>Главное меню</h1>
+        <button id="newGameButton" class="menuButton">Новая игра</button>
+        <button id="highScoreButton" class="menuButton">Лучший результат</button>
+        <div class="chooseDifficulty">
+            <p>Выбор сложности</p>
+            <button class="difficultyButton" data-difficulty="easy">Легкая</button>
+            <button class="difficultyButton" data-difficulty="normal">Средняя</button>
+            <button class="difficultyButton" data-difficulty="hard">Сложная</button>
+        </div>
+    </div>
     <script src="./main.js"></script>
 </body>
 </html>

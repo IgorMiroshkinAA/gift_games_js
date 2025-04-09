@@ -1,6 +1,87 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
+const menu = document.getElementById('menu');
+const newGameButton = document.getElementById('newGameButton');
+const highScoreButton = document.getElementById('highScoreButton');
+const difficultyButtons = document.querySelectorAll('.difficultyButton');
+
+let highScore = 0;
+let difficulty = 'normal';
+
+highScoreButton.addEventListener('click', () => {
+    alert(`Лучший резуьтат: ${highScore} очков`);
+});
+
+difficultyButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        difficulty = button.getAttribute('data-difficulty');
+        alert(`Ложность установлена: ${difficulty}`)
+    })
+})
+
+newGameButton.addEventListener('click', () => {
+    menu.style.display = 'none';
+    restartGame();
+})
+
+let isGamedPaused = false;
+
+function showModal(message) {
+    const modal = document.createElement('div');
+    modal.style.position = 'fixed';
+    modal.style.top = '50%';
+    modal.style.left = '50%';
+    modal.style.transform = 'translate(-50%, -50%)';
+    modal.style.background = 'white';
+    modal.style.padding = '20px';
+    modal.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
+    modal.style.textAlign = 'center';
+    modal.style.zIndex = '1000';
+
+    const messageElement = document.createElement('p');
+    messageElement.textContent = message;
+
+    const button = document.createElement('button');
+    button.textContent = 'Перезапустить игру';
+    button.onclick = () => {
+        document.body.removeChild(modal);
+        isGamedPaused = false;
+        update();
+    }
+
+    modal.appendChild(messageElement);
+    modal.appendChild(button);
+    document.body.appendChild(modal);
+}
+
+function showDefeatModal(message) {
+    const modal = document.createElement('div');
+    modal.style.position = 'fixed';
+    modal.style.top = '50%';
+    modal.style.left = '50%';
+    modal.style.transform = 'translate(-50%, -50%)';
+    modal.style.background = 'white';
+    modal.style.padding = '20px';
+    modal.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
+    modal.style.textAlign = 'center';
+    modal.style.zIndex = '1000';
+
+    const messageElement = document.createElement('p');
+    messageElement.textContent = message;
+
+    const button = document.createElement('button');
+    button.textContent = 'Перезапустить игру';
+    button.onclick = () => {
+        document.body.removeChild(modal);
+        restartGame();
+    }
+
+    modal.appendChild(messageElement);
+    modal.appendChild(button);
+    document.body.appendChild(modal);
+}
+
 const player = {
     width: 50,
     height: 50,
@@ -17,6 +98,40 @@ const giftCount = 10;
 let score = 0;
 let level = 1;
 let giftTypes = ['red', 'blue', 'green'];
+
+function restartGame() {
+    score = 0;
+    level = 1;
+    player.width = 50;
+
+    switch(difficulty) {
+        case 'easy': 
+            player.speed = 3;
+            player.width = 100;
+            gifts.forEach(gift => gift.speed = 3)
+            break;
+        case 'normal':
+            player.speed = 5;
+            player.width = 50;
+            gifts.forEach(gift => gift.speed = 5)
+            break;
+        case 'hard':
+            player.speed = 7;
+            player.width = 40;
+            gifts.forEach(gift => gift.speed = 7)
+            break;
+    }
+
+    gifts.length = 0;
+    specialBlackBlocks.length = 0;
+    specialYellowBlocks.length = 0;
+
+    createGifts();
+    createSpecialBlackBlock();
+    createSpecialYelloBlock();
+
+    update();
+}
 
 function createGifts() {
     for (let i = 0; i < giftCount; i++) {
@@ -48,7 +163,7 @@ function createSpecialYelloBlock() {
         height: 30,
         x: Math.random() * (canvas.width - 30),
         y: Math.random() * -canvas.height,
-        speed: 20,
+        speed: 10,
         color: 'yellow'
     });
 }
@@ -159,7 +274,7 @@ function detectCollisions() {
             player.y + player.height > block.y
         ) {
             specialYellowBlocks.splice(index, 1);
-            player.width -= 30;
+            player.width -= 20;
             console.log('Специальный блок пойман!');
         }
     });
@@ -175,6 +290,7 @@ function drawScore() {
 }
 
 function update() {
+    if (isGamedPaused) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     drawPlayer();
@@ -189,8 +305,21 @@ function update() {
     moveSpecialYellowBlocks();
     detectCollisions();
 
+    if (player.width <= 0) {
+        showDefeatModal(`Вы проиграли! Ваш счет: ${score}. Уровень: ${level}`);
+        return;
+    }
+
     if (score >= level * 100) {
         level++;
+
+        isGamedPaused = true;
+        showModal(`Поздравляем! Вы достигли уровня ${level - 1} с ${score} очками!`)
+
+        gifts.length = 0;
+        specialBlackBlocks.length = 0;
+        specialYellowBlocks.length = 0;
+
         createGifts();
         createSpecialBlackBlock();
         createSpecialYelloBlock();
