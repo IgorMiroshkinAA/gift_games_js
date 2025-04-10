@@ -1,7 +1,12 @@
+
+
 body {
     padding: 0;
     margin: 0;
     position: relative;
+    font-family: "Press Start 2P", system-ui;
+    font-weight: 400;
+    font-style: normal;
 }
 
 #menu {
@@ -21,6 +26,9 @@ body {
 .menuButton {
     margin: 10px; 
     padding: 10px 20px;
+    font-family: "Press Start 2P", system-ui;
+    font-weight: 400;
+    font-style: normal;
 }
 
 .chooseDifficulty {
@@ -30,4 +38,7 @@ body {
 .difficultyButton {
     margin: 5px;
     padding: 10px;
+    font-family: "Press Start 2P", system-ui;
+    font-weight: 400;
+    font-style: normal;
 }
