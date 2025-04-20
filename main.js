@@ -17,6 +17,7 @@ difficultyButtons.forEach(button => {
     button.addEventListener('click', () => {
         difficulty = button.getAttribute('data-difficulty');
         alert(`Ложность установлена: ${difficulty}`)
+        button.className.add('active-btn')
     })
 })
 
